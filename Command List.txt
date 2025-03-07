@@ -1,0 +1,5 @@
+use [item name] [action] -- The command for using different items in your inventory.
+base -- A prefix for a set of commands
+base craft [Item Name] -- Use to make crafting stations
+base craft [Crafting Station] [Item Name] -- Used for making items at crafting stations
+base return -- Will return you to your base
