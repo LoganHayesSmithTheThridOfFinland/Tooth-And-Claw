@@ -3,6 +3,19 @@
 -- If you do want to mod this and have any questions about the coding, email me at mrlogansir8@gmail.com .
 -- I don't read emails a lot, so don't be surprised if it takes me a while to respond.
 
+-- Other
+local save_ = {}
+local colors = { 
+    reset = "\27[0m",
+    red = "\27[31m",
+    green = "\27[32m",
+    yellow = "\27[33m",
+    blue = "\27[34m",
+    magenta = "\27[35m",
+    cyan = "\27[36m",
+    white = "\27[37m"
+}
+
 -- Scene Booleans
 local titleScene_ = true
 local settingsScene_ = false
@@ -16,7 +29,7 @@ local userResponse_
 local lastSceneLoaded_
 
 -- User Based Settings
-local textColor_
+local textColor_ = "\27[92m"
 
 -- Resource Max Gather Amounts
 local sticksMaxForest_ = 10
@@ -160,10 +173,9 @@ local campFireStoneCost_ = 15
 local campFireSticksCost = 20
 local campFireSmallRocksCost_ = 5
 
--- Other
-local save_ = {}
-
 os.execute("color 0a")
+
+
 function Mysplit(inputstr, sep)
     if sep == nil then
       sep = "%s"
@@ -199,7 +211,7 @@ print("||\\     \\___|  |__/ __ \\     /       ||")
 print("|| \\______  /____(____  /\\/\\_/       ||")
 print("||       \\/          \\/              ||")
 print("=======================================")
-print("||            Version 0.0            ||")
+print("||            Version 0.1            ||")
 print("=======================================")
 print(" ")
 print("(1) Start")
@@ -257,11 +269,11 @@ end
 
 function Death_ ()
     os.execute("cls")
-    print("=======================================")
+    print("\27[31m=======================================")
     print("||               Dead                ||")
     print("=======================================")
     print("||          (1) Continue             ||")
-    print("=======================================")
+    print("=======================================".. textColor_)
     end
     
 
@@ -319,7 +331,7 @@ function AreaRe_ (msg_)
     if currentBiome_ == "Forest" then
         print("Local Resources: ".. resources_[1], resources_[2], resources_[3])
         elseif currentBiome_ == "Plains" then
-            print("Local Resources: ".. resources_[3])
+            print("Local Resources: ".. resources_[2], resources_[3])
             elseif  currentBiome_ == "Jungle" then
                 print("Local Resources: ".. resources_[1], resources_[2], resources_[3])
                 elseif currentBiome_ == "Desert" then
@@ -355,6 +367,11 @@ while true do
         titleScene_ = false
         settingsScene_ = false
         areaScene_ = true
+    end
+    if userResponse_ == "1" and deathScene_ == true then
+        os.execute("cls")
+        os.execute("start Tooth And Claw.bat")
+        os.exit()
     end
     if userResponse_ ~= nil and string.match(userResponse_, "1") and encounterScene_ == true then
         os.execute("cls")
@@ -933,14 +950,14 @@ while true do
             if damageChances_ == 1 then
                 local ranDamageScav_ = math.random(scavengingDamageMin_, scavengingDamageMax_)
                 health_ = health_ - ranDamageScav_
-                print(scavengingDamageLines_[math.random(1, #scavengingDamageLines_)])
+                print("\27[31m".. scavengingDamageLines_[math.random(1, #scavengingDamageLines_)].. textColor_)
                 print(" ")
-                print("-".. ranDamageScav_.. " Health")
+                print("\27[31m-".. ranDamageScav_.. " Health".. textColor_)
                 print(" ")
             end
             elseif energy_ <= 2 then
                 print(" ")
-                print("You do not have enough energy to scavenge!")
+                print("\27[33mYou do not have enough energy to scavenge!".. textColor_)
                     print(" ")
         end
     end
@@ -990,13 +1007,13 @@ while true do
             local damage_ = math.random(sleepingDamageMin_, sleepingDamageMax_)
             health_ = health_ - damage_
             print(" ")
-            print(sleepingDamageLines_[math.random(1, #sleepingDamageLines_)])
-            print("-".. damage_.. " Health")
+            print("\27[31m".. sleepingDamageLines_[math.random(1, #sleepingDamageLines_)].. textColor_)
+            print("\27[31m-".. damage_.. " Health".. textColor_)
             print(" ")
             end
         elseif  energy_ > 5 then
             print(" ")
-            print("You aren't tired enough to sleep!")
+            print("\27[33m You aren't tired enough to sleep!".. textColor_)
             print(" ")
     end
     end
@@ -1013,6 +1030,7 @@ while true do
         AreaRe_()
         if userResponse_ == "4 bandage" and energy_ >= craftEnergyCost_ then
             if leaves_ >= bandageLeavesAmount_ then
+                leaves_ = leaves_ - bandageLeavesAmount_
                 bandages_ = bandages_ + 1
                 print(" ")
                 print("You've made a bandage!")
@@ -1147,7 +1165,7 @@ while true do
                 encounterScene_ = true
                 if encounter_ == 1 then
                     print(" ")
-                    print(travelEncounterMessage_[1])
+                    print("\27[31m".. travelEncounterMessage_[1].. textColor_)
                     print(" ")
                     print("(1) Fight")
                     print("(2) Run")
@@ -1156,7 +1174,7 @@ while true do
                 end
                 if encounter_ == 2 then
                     print(" ")
-                    print(travelEncounterMessage_[2])
+                    print("\27[31m".. travelEncounterMessage_[2].. textColor_)
                     print(" ")
                     print("(1) Fight")
                     print("(2) Run")
@@ -1165,7 +1183,7 @@ while true do
                 end
                 if encounter_ == 3 then
                     print(" ")
-                    print(travelEncounterMessage_[3])
+                    print("\27[31m".. travelEncounterMessage_[3].. textColor_)
                     print(" ")
                     print("(1) Fight")
                     print("(2) Run")
@@ -1174,7 +1192,7 @@ while true do
                 end
                 if encounter_ == 3 then
                     print(" ")
-                    print(travelEncounterMessage_[4])
+                    print("\27[31m".. travelEncounterMessage_[4].. textColor_)
                     print(" ")
                     print("(1) Fight")
                     print("(2) Run")
@@ -1248,32 +1266,32 @@ while true do
         if userResponse_ == "1 green" then
             userResponse_ = nil
             os.execute("color 0a")
-            textColor_ = "a"
+            textColor_ = "27[32m"
         end
         if userResponse_ == "1 cyan" then
             userResponse_ = nil
             os.execute("color 0b")
-            textColor_ = "b"
+            textColor_ = "\27[36m"
         end
         if userResponse_ == "1 red" then
             userResponse_ = nil
             os.execute("color 0c")
-            textColor_ = "c"
+            textColor_ = "\27[31m"
         end
         if userResponse_ == "1 purple" then
             userResponse_ = nil
             os.execute("color 0d")
-            textColor_ = "d"
+            textColor_ = "\27[35m"
         end
         if userResponse_ == "1 yellow" then
             userResponse_ = nil
             os.execute("color 0e")
-            textColor_ = "e"
+            textColor_ = "\27[33m"
         end
         if userResponse_ == "1 white" then
             userResponse_ = nil
             os.execute("color 0f")
-            textColor_ = "e"
+            textColor_ = "\27[37m"
         end
     end
     if userResponse_ ~= nil and string.match(userResponse_, "use") and areaScene_ == true then
@@ -1291,7 +1309,7 @@ while true do
         end
         if userResponse_ == "use stone hatchet hunt" and energy_ <= huntingEnergyCost_ and hasStoneHatchet_ == 1 then
             print(" ")
-            print("You are too tired to hunt!")
+            print("\27[33m You are too tired to hunt!".. textColor_)
             print(" ")
             end
         if userResponse_ == "use stone hatchet hunt" and energy_ >= huntingEnergyCost_ and hasStoneHatchet_ == 1  then
@@ -1308,12 +1326,12 @@ while true do
             print(" ")
             if breakChance_ == 1 then
                 hasStoneHatchet_ = 0
-                print("Your stone hatchet broke!")
+                print("\27[31m Your stone hatchet broke!".. textColor_)
             end
         end
         if userResponse_ == "use stone spear hunt" and energy_ <= huntingEnergyCost_ and hasStoneSpear_ == 1 then
             print(" ")
-            print("You are too tired to hunt!")
+            print("\27[33m You are too tired to hunt!".. textColor_)
             print(" ")
             end
         if userResponse_ == "use stone spear hunt" and energy_ >= huntingEnergyCost_ and hasStoneSpear_ == 1  then
@@ -1330,17 +1348,17 @@ while true do
             print(" ")
             if breakChance_ == 1 then
                 hasStoneSpear_ = 0
-                print("Your stone spear broke!")
+                print("\27[31m Your stone spear broke!".. textColor_)
             end
         end
         if userResponse_ == "use stone hatchet chop" and energy_ <= choppingTreeEnergyCost_ and hasStoneHatchet_ == 1 then
             print(" ")
-            print("You are too tired to chop down trees!")
+            print("\27[33m You are too tired to chop down trees!".. textColor_)
             print(" ")
             end
             if userResponse_ == "use stone hatchet chop" and currentBiome_ == "Plains" and hasStoneHatchet_ == 1 then
                 print(" ")
-                print("There are no trees around!")
+                print("\27[33m There are no trees around!".. textColor_)
                 print(" ")
                 end
         if userResponse_ == "use stone hatchet chop" and energy_ >= choppingTreeEnergyCost_ and hasStoneHatchet_ == 1  then
@@ -1354,12 +1372,12 @@ while true do
             print(" ")
             if breakChance_ == 1 then
                 hasStoneHatchet_ = 0
-                print("Your stone hatchet broke!")
+                print("\27[31m Your stone hatchet broke!".. textColor_)
             end
         end
         if userResponse_ == "use stone pickaxe mine" and energy_ <= miningEnergyCost_ and hasStonePickaxe_ == 1 then
             print(" ")
-            print("You are too tired to mine!")
+            print("\27[33m You are too tired to mine!".. textColor_)
             print(" ")
             end
         if userResponse_ == "use stone pickaxe mine" and energy_ >= miningEnergyCost_ and hasStonePickaxe_ == 1  then
@@ -1378,7 +1396,7 @@ while true do
             end
             if breakChance_ == 1 then
                 hasStoneHatchet_ = 0
-                print("Your stone pickaxe broke!")
+                print("\27[31m Your stone pickaxe broke!".. textColor_)
             end
         end
         if userResponse_ == "use stone hatchet" and  hasStoneHatchet_ == 1 then
@@ -1405,7 +1423,7 @@ while true do
                 hunger_ = hungerMax_
             end
         end
-        if userResponse_ == "use berries eat" and berries_ >= 1 then
+        if userResponse_ == "use berries eat" and berries_ >= 1 and berries_ < 5 then
             hunger_ = hunger_ + berriesFoodIncrease_
             print(" ")
             print("Food consumed!")
@@ -1414,16 +1432,17 @@ while true do
             if hunger_ > hungerMax_ then
                 hunger_ = hungerMax_
             end
-            elseif userResponse_ == "use berries eat" and berries_ >= 5  and hunger_ >= 95 then
-                hunger_ = hunger_ + berriesFoodIncrease_ * 5
-                print(" ")
-                print("Food consumed!")
-                print("+".. berriesFoodIncrease_.. " Hunger")
-                print(" ")
-                if hunger_ > hungerMax_ then
-                    hunger_ = hungerMax_
-                end
         end
+        if userResponse_ == "use berries eat" and berries_ >= 5  and hunger_ <= 95 then
+            hunger_ = hunger_ + berriesFoodIncrease_ * 5
+            print(" ")
+            print("Food consumed!")
+            print("+5 Hunger")
+            print(" ")
+            if hunger_ > hungerMax_ then
+                hunger_ = hungerMax_
+            end
+            end
     end
     if userResponse_ ~= nil and string.match(userResponse_, "base") and areaScene_ == true then
         if userResponse_ == "base return" and hasABase_ == 1 then
@@ -1434,7 +1453,7 @@ while true do
             elseif hasABase_ == 0 and userResponse_ ~= "base return" then
                 os.execute("cls")
                 AreaRe_()
-                print("You do not have a base built!")
+                print("\27[33m You do not have a base built!".. textColor_)
         end
         if userResponse_ == "base craft campfire" and hasABase_ == 1 and energy_ >= craftEnergyCost_ and atBase_ == 1 then
             if wood_ >= campFireWoodCost_ and stone_ >= campFireStoneCost_ and sticks_ >= campFireSticksCost and smallRocks_ >= campFireSmallRocksCost_ and campFireAtBase_ == 0 then
@@ -1468,7 +1487,7 @@ while true do
         end
         if userResponse_ == "base campfire" and campFireAtBase_ == 0 then
             print(" ")
-            print("You do not have a campfire!")
+            print("\27[33m You do not have a campfire!".. textColor_)
             print(" ")
         end
         if userResponse_ == "base craft" and hasABase_ == 1 then
@@ -1500,7 +1519,7 @@ while true do
             Mysplit(saveFileR_:read(), " ")
            end
         end
-    end
+    end 
     if userResponse_ == "load" and areaScene_ == true then
         print("Loaded!")
         health_ = tonumber(save_[1])
