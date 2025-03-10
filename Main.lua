@@ -168,15 +168,20 @@ local atBase_ = 0
 local baseBiomeLocation_ = "ph" -- placeholder
 local baseLocationTempeture_ = 0 -- placeholder
 local campFireAtBase_ = 0
+local forgeAtBase_ = 0
 local campFireWoodCost_ = 10
 local campFireStoneCost_ = 15
 local campFireSticksCost = 20
 local campFireSmallRocksCost_ = 5
+local forgeStoneCost_ = 40
+local forgeHideCost_ = 45
+local forgeSmallRockCost_ = 25
 
 os.execute("color 0a")
 
 
 function Mysplit(inputstr, sep)
+    if inputstr ~= nil then
     if sep == nil then
       sep = "%s"
     end
@@ -184,6 +189,7 @@ function Mysplit(inputstr, sep)
       table.insert(save_, str)
     end
   end
+end
   
 function Title_ ()
 os.execute("cls")
@@ -211,7 +217,7 @@ print("||\\     \\___|  |__/ __ \\     /       ||")
 print("|| \\______  /____(____  /\\/\\_/       ||")
 print("||       \\/          \\/              ||")
 print("=======================================")
-print("||            Version 0.1            ||")
+print("||            Version 0.2            ||")
 print("=======================================")
 print(" ")
 print("(1) Start")
@@ -316,7 +322,7 @@ function Area_ (msg_)
     print("(4) Craft")
     print("(5) Travel")
     print("(6) Inventory")
-    print("(7) Unspecified Commands")
+    print("(7) Commands")
 end
 
 function AreaRe_ (msg_)
@@ -345,7 +351,7 @@ function AreaRe_ (msg_)
     print("(4) Craft")
     print("(5) Travel")
     print("(6) Inventory")
-    print("(7) Unspecified Commands")
+    print("(7) Commands")
 end
 
 function IndexArray (arrayVal_)
@@ -370,7 +376,7 @@ while true do
     end
     if userResponse_ == "1" and deathScene_ == true then
         os.execute("cls")
-        os.execute("start Tooth And Claw.bat")
+        os.execute("start Tooth_And_Claw.bat")
         os.exit()
     end
     if userResponse_ ~= nil and string.match(userResponse_, "1") and encounterScene_ == true then
@@ -1259,8 +1265,22 @@ while true do
         os.execute("cls")
         AreaRe_()
         print(" ")
-        print("Use: Will use the item specified. Example: Use [item] [arg]")
-        print("Base: Will activate a set of commands if the player has a base built. Example: Base [command]")
+        print("\27[34msave (Will save your game.)")
+        print("load (Will load your save.)\27[37m")
+        print(" ")
+        print("\27[32muse stone hatchet chop (Will chop down a tree with your stone hatchet. (Requires you to have a stone hatchet.))")
+        print("use stone hatchet hunt (Will make you hunt with your stone hatchet. (Requires you to have a stone hatchet.))")
+        print("use stone spear hunt (Will make you hunt with your stone spear. (Requires you to have a stone spear.))")
+        print("use stone pickaxe mine (Will make you mine with your stone pickaxe. (Requires you to have a stone pickaxe.))")
+        print("use bandage heal (Will heal you with your bandage. (Requires you to have a bandage.))")
+        print("use berries eat (Will make you eat your berries. (Requires you to have berries.))")
+        print("use cooked meat eat (Will make you eat your cooked meat. (Requires you to have cooked meat))\27[37m")
+        print("")
+        print("\27[33mbase return (Will return you to your base. (Requires you to have a base already built.))")
+        print("base craft campfire (Will craft a campfire at your base. (Requires you to have a base already built.))")
+        print("base craft forge (Will craft a forge at your base. (Requires you to have a base already built.))") 
+        print("base forge smelt iron (Will smelt your iron ore into iron. (Requires you to have a base already built, have a forge, and to have at least 1 iron ore and 1 wood.))") 
+        print("base campfire cook meat (Will cook your meat. (Requires you to have a base already built, have a campfire, and to have at least 1 meat and 1 wood.))".. textColor_) 
     end
     if userResponse_ ~= nil and string.match(userResponse_, "1") and settingsScene_ == true then
         if userResponse_ == "1 green" then
@@ -1271,27 +1291,27 @@ while true do
         if userResponse_ == "1 cyan" then
             userResponse_ = nil
             os.execute("color 0b")
-            textColor_ = "\27[36m"
+            textColor_ = "\27[96m"
         end
         if userResponse_ == "1 red" then
             userResponse_ = nil
             os.execute("color 0c")
-            textColor_ = "\27[31m"
+            textColor_ = "\27[91m"
         end
         if userResponse_ == "1 purple" then
             userResponse_ = nil
             os.execute("color 0d")
-            textColor_ = "\27[35m"
+            textColor_ = "\27[95m"
         end
         if userResponse_ == "1 yellow" then
             userResponse_ = nil
             os.execute("color 0e")
-            textColor_ = "\27[33m"
+            textColor_ = "\27[93m"
         end
         if userResponse_ == "1 white" then
             userResponse_ = nil
             os.execute("color 0f")
-            textColor_ = "\27[37m"
+            textColor_ = "\27[97m"
         end
     end
     if userResponse_ ~= nil and string.match(userResponse_, "use") and areaScene_ == true then
@@ -1425,6 +1445,7 @@ while true do
         end
         if userResponse_ == "use berries eat" and berries_ >= 1 and berries_ < 5 then
             hunger_ = hunger_ + berriesFoodIncrease_
+            berries_ = berries_ - 1
             print(" ")
             print("Food consumed!")
             print("+".. berriesFoodIncrease_.. " Hunger")
@@ -1435,6 +1456,7 @@ while true do
         end
         if userResponse_ == "use berries eat" and berries_ >= 5  and hunger_ <= 95 then
             hunger_ = hunger_ + berriesFoodIncrease_ * 5
+            berries_ = berries_ - 5
             print(" ")
             print("Food consumed!")
             print("+5 Hunger")
@@ -1477,17 +1499,54 @@ while true do
                     print("You're too tired to craft!")
                     print(" ")
         end
-        if userResponse_ == "base campfire craft" and campFireAtBase_ == 1 and meat_ >= 1 and atBase_ == 1 then
+        if userResponse_ == "base craft forge" and hasABase_ == 1 and energy_ >= craftEnergyCost_ and atBase_ == 1 then
+            if stone_ >= forgeStoneCost_ and smallRocks_ >= forgeSmallRockCost_ and hide_ >= forgeHideCost_ and forgeAtBase_ == 0 then
+                os.execute("cls")
+                AreaRe_()
+                forgeAtBase_ = 1
+                print(" ")
+                print("Forge made!")
+                print(" ")
+            end
+            elseif userResponse_ == "base craft forge" and hasABase_ == 0 then
+                os.execute("cls")
+                AreaRe_()
+                print(" ")
+                print("You don't have a base!")
+                print(" ")
+                elseif userResponse_ == "base craft forge" and energy_ <= craftEnergyCost_ then
+                    os.execute("cls")
+                    AreaRe_()
+                    print(" ")
+                    print("You're too tired to craft!")
+                    print(" ")
+        end
+        if userResponse_ == "base campfire cook meat" and campFireAtBase_ == 1 and meat_ >= 1 and wood_ >= 1 and atBase_ == 1 then
             meat_ = meat_ - 1
+            wood_ = wood_ - 1
             cookedMeat_ = cookedMeat_ + 1
             print(" ")
             print("Meat cooked!")
             print("+1 Cooked Meat")
             print(" ")
         end
+        if userResponse_ == "base forge smelt iron" and forgeAtBase_ == 1 and ironOre_ >= 1 and wood_ >= 1 and atBase_ == 1 then
+            ironOre_ = ironOre_ - 1
+            wood_ = wood_ - 1
+            ironIngots_ = ironIngots_ + 1
+            print(" ")
+            print("Iron smelted!")
+            print("+1 iron ingot")
+            print(" ")
+        end
         if userResponse_ == "base campfire" and campFireAtBase_ == 0 then
             print(" ")
             print("\27[33m You do not have a campfire!".. textColor_)
+            print(" ")
+        end
+        if userResponse_ == "base forge" and forgeAtBase_ == 0 then
+            print(" ")
+            print("\27[33m You do not have a forge!".. textColor_)
             print(" ")
         end
         if userResponse_ == "base craft" and hasABase_ == 1 then
@@ -1512,7 +1571,7 @@ while true do
         print("Saved!")
         local saveFileW_ = io.open("saved/Save.sv","w")
         if saveFileW_ ~= nil then
-            saveFileW_:write(health_, " ", energy_, " ", wood_, " ", stone_, " ", sticks_, " ", leaves_, " ", smallRocks_, " ", hide_, " ", meat_, " ", ironOre_, " ", ironIngots_, " ", bandages_, " ", hasStoneHatchet_, " ", hasStonePickaxe_, " ", hasStoneSpear_, " ", currentBiome_, " ", currenttempeture_, " ", hasABase_, " ", baseBiomeLocation_, " ", baseLocationTempeture_, " ", atBase_, " ", day_, " ", campFireAtBase_, " ", cookedMeat_, " ", hunger_, " ", berries_)
+            saveFileW_:write(health_, " ", energy_, " ", wood_, " ", stone_, " ", sticks_, " ", leaves_, " ", smallRocks_, " ", hide_, " ", meat_, " ", ironOre_, " ", ironIngots_, " ", bandages_, " ", hasStoneHatchet_, " ", hasStonePickaxe_, " ", hasStoneSpear_, " ", currentBiome_, " ", currenttempeture_, " ", hasABase_, " ", baseBiomeLocation_, " ", baseLocationTempeture_, " ", atBase_, " ", day_, " ", campFireAtBase_, " ", cookedMeat_, " ", hunger_, " ", berries_, forgeAtBase_)
            saveFileW_:close()
            local saveFileR_ = io.open("saved/Save.sv","r")
            if saveFileR_ ~= nil then
@@ -1521,6 +1580,7 @@ while true do
         end
     end 
     if userResponse_ == "load" and areaScene_ == true then
+        if save_[1] ~= nil then
         print("Loaded!")
         health_ = tonumber(save_[1])
         energy_ = tonumber(save_[2])
@@ -1548,7 +1608,13 @@ while true do
         cookedMeat_ = tonumber(save_[24])
         hunger_ = tonumber(save_[25])
         berries_ = tonumber(save_[26])
+        forgeAtBase_ = tonumber(save_[27])
         AreaRe_()
+        elseif save_[1] == nil then
+            print(" ")
+            print("\27[33mThere is no save to load!".. textColor_)
+            print(" ")
+        end
     end
 
     if health_ <= 0 then

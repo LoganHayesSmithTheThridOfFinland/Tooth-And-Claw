@@ -1,0 +1,2 @@
+@echo
+lua Main.lua
